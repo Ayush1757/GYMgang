@@ -1,0 +1,50 @@
+1571:             // if a nonâ€‘admin somehow landed on this page, bounce them out
+1572:             if (user.role !== 'admin') {
+1573:                 // you can comment out the redirect if you want them to stay here
+1574:                 // and see only their QR image
+1575:                 // window.location.href = '/home.html';
+1576:             }
+1577: 
+1578:             document.getElementById('userName').textContent = user.fullname;
+1579:             document.getElementById('profileName').value = user.fullname;
+1580:             document.getElementById('profileEmail').value = user.email;
+1581:             document.getElementById('profilePhone').value = user.phone || '';
+1582:             document.getElementById('profileRole').value = user.role === 'admin' ? 'Admin' : 'Member';
+1583: 
+1584:             loadDashboardData();
+1585:             loadMembers();
+1586:             loadAnnouncements();
+1587:             initCharts();
+1588:             adjustQrSection();              // <â€“â€“ roleâ€‘aware adjustment
+1589:         });
+1590: 
+1591:         // Sidebar Toggle
+1592:         function toggleSidebar() {
+1593:             const sidebar = document.getElementById('sidebar');
+1594:             const container = document.getElementById('mainContainer');
+1595:             sidebar.classList.toggle('collapsed');
+1596:             container.classList.toggle('collapsed');
+1597:         }
+1598: 
+1599:         // Page Switching
+1600:         function switchPage(page) {
+1601:             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+1602:             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+1603: 
+1604:             const pageElement = document.getElementById(page + '-page');
+1605:             if (pageElement) {
+1606:                 pageElement.classList.add('active');
+1607: 
+1608:                 // Refresh data based on page
+1609:                 if (page === 'dashboard') { loadDashboardData(); loadAnnouncements(); }
+1610:                 if (page === 'announcements') loadAnnouncements();
+1611:                 if (page === 'payments') {
+1612:                     loadPayments();
+1613:                     loadAdminConfig();
+1614:                     loadMembers();
+1615:                 }
+1616:             }
+1617: 
+1618:             const menuItem = document.querySelector(`[onclick="switchPage('${page}')"]`);
+1619:             if (menuItem) {
+1620:                 menuItem.classList.add('active');

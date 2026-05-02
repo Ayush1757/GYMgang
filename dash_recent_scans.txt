@@ -1,0 +1,40 @@
+2541: 
+2542:         // Manual QR / email entry
+2543:         function scanQrManually() {
+2544:             const val = document.getElementById('manualQRCode').value.trim();
+2545:             if (!val) { showToast('Please enter member email or QR data', 'error'); return; }
+2546:             processScan(val);
+2547:             document.getElementById('manualQRCode').value = '';
+2548:         }
+2549: 
+2550:         // Load today's recent scans into the UI
+2551:         function loadRecentScans() {
+2552:             fetch('/attendanceRecords')
+2553:                 .then(res => res.json())
+2554:                 .then(data => {
+2555:                     if (data.success && data.records) {
+2556:                         const list = document.getElementById('recentScansList');
+2557:                         if (!list) return;
+2558:                         list.innerHTML = '';
+2559: 
+2560:                         if (data.records.length === 0) {
+2561:                             list.innerHTML = '<p style="color: #9ca3af; font-size: 13px; text-align: center;">No scans today</p>';
+2562:                             return;
+2563:                         }
+2564: 
+2565:                         data.records.forEach(record => {
+2566:                             const item = document.createElement('div');
+2567:                             item.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #330000;font-size:13px;';
+2568:                             item.innerHTML =
+2569:                                 '<span style="color:#22c55e">\u2705</span>' +
+2570:                                 '<span style="color:#f9fafb;flex:1;margin:0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(record.memberName || '') + '</span>' +
+2571:                                 '<span style="color:#9ca3af;">' + escapeHtml(record.checkInTime || '') + '</span>';
+2572:                             list.appendChild(item);
+2573:                         });
+2574:                     }
+2575:                 })
+2576:                 .catch(err => console.error("Error loading recent scans:", err));
+2577:         }
+2578: 
+2579:         // Stop camera if navigating away from QR Scanner page
+2580:         var _origSwitchPage = switchPage;

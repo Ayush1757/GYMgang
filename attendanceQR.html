@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Attendance QR</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #000000);
+background-size:400% 400%;
+animation: gradientMove 10s ease infinite;
+color:white;
+font-family:'Segoe UI', sans-serif;
+}
+
+@keyframes gradientMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+.card{
+background: rgba(255,255,255,0.08);
+padding:40px;
+border-radius:25px;
+text-align:center;
+width:420px;
+box-shadow:0 0 40px rgba(0,255,255,0.2);
+}
+
+h1{
+color:#00ffff;
+margin-bottom:20px;
+}
+
+#qrcode{
+margin-top:20px;
+display:flex;
+justify-content:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h1>Your Attendance QR</h1>
+<p>Show this QR to Gym Staff</p>
+<div id="qrcode"></div>
+</div>
+
+<script>
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+    alert("Please login first");
+    window.location.href = "/login.html";
+}
+
+fetch("/getUserQR?email=" + user.email)
+.then(res => res.json())
+.then(data => {
+
+    if(data.success){
+
+        new QRCode(document.getElementById("qrcode"), {
+            text: data.qrCode,
+            width: 220,
+            height: 220
+        });
+
+    } else {
+        alert(data.message);
+    }
+
+});
+
+</script>
+
+</body>
+</html>
